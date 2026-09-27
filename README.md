@@ -1,22 +1,20 @@
-# Capstone Project — Data Pipeline, Analytics & Support Assistant
+# Zepto Data & AI Platform — Capstone Project
 
-## Project Overview
+This repository contains the three required capstone modules in **one repository**:
 
-This capstone project implements an end-to-end data engineering, analytics, machine learning, and AI support assistant workflow.
+1. `data_pipeline/` — scrape → clean → currency conversion → SQLite → SQL → pandas verification.
+2. `analytics/` — Titanic profiling → EDA → preprocessing → classification → imbalance analysis → tuning → regression → saved pipeline.
+3. `support_assistant/` — policy ingestion → local embeddings → ChromaDB retrieval → LangGraph routing → Pydantic response → FastAPI → Docker.
 
-The project is divided into three main modules:
+The repository uses **one consolidated `requirements.txt` at the root**. Module-specific requirements are not duplicated.
 
-1. **Data Pipeline** — Web scraping, data cleaning, currency conversion, relational database loading, SQL analysis, and pandas verification.
-2. **Analytics & Machine Learning** — Exploratory Data Analysis (EDA), preprocessing, classification, class-imbalance analysis, model tuning, regression, and model persistence using the Titanic dataset.
-3. **Support Assistant** — A support assistant application using a knowledge base, retrieval, routing, and Docker-based deployment.
-
----
-
-## Project Structure
+## Project structure
 
 ```text
 Capstone-project-main/
-│
+├── README.md
+├── requirements.txt
+├── .gitignore
 ├── data_pipeline/
 │   ├── scrape_books.py
 │   ├── clean_data.py
@@ -24,247 +22,158 @@ Capstone-project-main/
 │   ├── run_queries.py
 │   ├── pandas_verification.py
 │   ├── queries.sql
+│   ├── README.md
 │   ├── requirements.txt
-│   └── README.md
-│
+│   ├── raw_books.csv
+│   ├── cleaned_books.csv
+│   ├── zepto_books.db
+│   ├── query_outputs.txt
+│   └── pandas_verification.txt
 ├── analytics/
 │   ├── eda.ipynb
 │   ├── modeling.ipynb
 │   ├── titanic.csv
 │   ├── titanic_best_pipeline.joblib
 │   └── README.md
-│
-├── support_assistant/
-│   ├── Dockerfile
-│   ├── graph.py
-│   ├── ingest.py
-│   ├── main.py
-│   ├── models.py
-│   ├── prompt.py
-│   └── README.md
-│
-├── .gitignore
-└── README.md
+└── support_assistant/
+    ├── __init__.py
+    ├── docs/
+    ├── ingest.py
+    ├── prompt.py
+    ├── graph.py
+    ├── models.py
+    ├── main.py
+    ├── Dockerfile
+    └── README.md
 ```
 
----
+## 1. Installation
 
-# Module 1 — Data Pipeline
+From the **repository root**:
 
-The data pipeline module demonstrates an end-to-end data engineering workflow.
-
-### Main steps
-
-* Scrape product/book data from a public scraping-practice website
-* Clean and transform the raw data
-* Apply the required currency conversion
-* Store the processed data in a relational SQLite database
-* Execute SQL queries for analysis
-* Verify the results using pandas
-
-### Main files
-
-* `scrape_books.py` — Scrapes the source data
-* `clean_data.py` — Cleans and transforms the data
-* `database.py` — Creates and loads the SQLite database
-* `queries.sql` — SQL analysis queries
-* `run_queries.py` — Executes SQL queries
-* `pandas_verification.py` — Verifies SQL results using pandas
-
----
-
-# Module 2 — Analytics & Machine Learning
-
-This module implements an end-to-end analytics and predictive-modeling workflow using the Titanic dataset.
-
-### Exploratory Data Analysis
-
-The analysis includes:
-
-* Dataset profiling
-* Missing-value analysis
-* Data cleaning
-* Descriptive statistics
-* Histograms and box plots
-* Outlier analysis
-* Survival-rate analysis
-* Correlation analysis
-* Multivariate visualizations
-* Z-score standardization
-
-### Machine Learning
-
-The following classification models are implemented:
-
-* Logistic Regression
-* Decision Tree
-* Random Forest
-
-The workflow also includes:
-
-* Stratified train-test splitting
-* Numerical preprocessing
-* Categorical preprocessing
-* `ColumnTransformer`
-* `Pipeline`
-* Class-imbalance analysis
-* SMOTE
-* Random Forest hyperparameter tuning
-* Cross-validation
-* ROC-AUC evaluation
-* Model persistence using Joblib
-
-### Regression
-
-A multivariate Linear Regression model is used to predict fare.
-
-Evaluation metrics include:
-
-* MAE
-* RMSE
-* R²
-* Adjusted R²
-
-### Main files
-
-* `eda.ipynb` — Exploratory Data Analysis
-* `modeling.ipynb` — Machine Learning and regression
-* `titanic.csv` — Offline dataset
-* `titanic_best_pipeline.joblib` — Saved ML pipeline
-
----
-
-# Module 3 — Support Assistant
-
-The support assistant module implements a knowledge-based support application.
-
-It includes:
-
-* Knowledge-base ingestion
-* Retrieval
-* Support-ticket handling
-* Routing
-* Prompt/model components
-* Docker containerization
-
-### Main files
-
-* `ingest.py` — Knowledge-base ingestion
-* `graph.py` — Application workflow/routing
-* `models.py` — Model definitions
-* `prompt.py` — Prompt configuration
-* `main.py` — Application entry point
-* `Dockerfile` — Container configuration
-
----
-
-# Technologies Used
-
-### Programming
-
-* Python
-* SQL
-
-### Data & Machine Learning
-
-* Pandas
-* NumPy
-* Scikit-learn
-* Matplotlib
-* Seaborn
-* Joblib
-* imbalanced-learn / SMOTE
-
-### Database
-
-* SQLite
-
-### AI / Application
-
-* Retrieval-based support workflow
-* Knowledge-base processing
-* Docker
-
----
-
-# How to Run
-
-## Module 1
-
-Navigate to the data pipeline directory:
-
-```bash
-cd data_pipeline
-```
-
-Install dependencies:
-
-```bash
+```powershell
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
-Run the pipeline scripts in the required order.
+Linux/macOS:
 
----
+```bash
+python -m venv .venv
+source .venv/bin/activate
+python -m pip install --upgrade pip
+pip install -r requirements.txt
+```
 
-## Module 2
+No paid API is required for the graded baseline.
 
-Open the notebooks:
+## 2. Data Pipeline
 
-```text
-analytics/eda.ipynb
-analytics/modeling.ipynb
+The source is `books.toscrape.com`. The required fixed conversion is:
+
+**1 GBP = 105.50 INR**
+
+The database contains a normalized `categories` table and `books` table connected through a foreign key.
+
+### Run from the repository root
+
+```bash
+python data_pipeline/scrape_books.py
+python data_pipeline/clean_data.py
+python data_pipeline/database.py
+python data_pipeline/run_queries.py
+python data_pipeline/pandas_verification.py
+```
+
+### Or run from inside `data_pipeline`
+
+The scripts resolve their paths from their own location, so this also works:
+
+```bash
+cd data_pipeline
+python scrape_books.py
+python clean_data.py
+python database.py
+python run_queries.py
+python pandas_verification.py
+```
+
+The scraper must produce at least 60 books across at least 3 categories. The saved SQL output demonstrates `SELECT`, `WHERE`, `ORDER BY`, `LIMIT`, `DISTINCT`, `BETWEEN`, `IN`, and `JOIN`.
+
+## 3. Analytics
+
+Run the notebooks in this order:
+
+1. `analytics/eda.ipynb`
+2. `analytics/modeling.ipynb`
+
+The EDA notebook performs the single `sns.load_dataset("titanic")` load and immediately saves `analytics/titanic.csv`. The modeling notebook reads that committed CSV rather than independently loading Titanic again.
+
+The modeling notebook uses a stratified split, training-only preprocessing, Logistic Regression, Decision Tree, Random Forest, baseline/class-weight/SMOTE comparison, Random Forest GridSearchCV with OOB scoring, fare regression, a combined model-comparison table, and a complete saved pipeline.
+
+## 4. Support Assistant
+
+The required baseline is deterministic mock mode. `MOCK_LLM` defaults to `1`.
+
+First build the local ChromaDB index from the repository root:
+
+```bash
+python -m support_assistant.ingest
+```
+
+Then start FastAPI:
+
+```bash
+uvicorn support_assistant.main:app --host 0.0.0.0 --port 7860
+```
+
+Test a policy question:
+
+```bash
+curl -X POST http://127.0.0.1:7860/ask -H "Content-Type: application/json" -d "{\"query\":\"What is the delivery fee below INR 149?\"}"
+```
+
+Test a general question:
+
+```bash
+curl -X POST http://127.0.0.1:7860/ask -H "Content-Type: application/json" -d "{\"query\":\"Tell me a joke\"}"
+```
+
+Policy questions are classified using the required keyword heuristic, retrieve the top 3 ChromaDB chunks, and return a deterministic answer. General questions return the fixed mock response without retrieval.
+
+## 5. Docker
+
+Build from the **repository root**:
+
+```bash
+docker build -t zepto-support-assistant -f support_assistant/Dockerfile .
 ```
 
 Run:
 
-1. `eda.ipynb`
-2. `modeling.ipynb`
+```bash
+docker run --rm -p 7860:7860 zepto-support-assistant
+```
 
-The notebooks contain the complete analysis, visualizations, model training, evaluation, and results.
+The image builds the ChromaDB index during the image build and starts FastAPI on port 7860.
 
----
+## 6. Git workflow
 
-## Module 3
-
-Navigate to:
+The supplied capstone requires at least one feature branch with at least two commits and a merge back into `main`. A reproducible example is:
 
 ```bash
-cd support_assistant
+git checkout -b feature/zepto-platform
+git add .
+git commit -m "feat: complete data pipeline"
+git add .
+git commit -m "feat: complete analytics and support assistant"
+git checkout main
+git merge --no-ff feature/zepto-platform -m "merge: complete capstone platform"
+git log --graph --oneline --all
 ```
 
-Build the Docker image:
+## Reproducibility and integrity
 
-```bash
-docker build -t support-assistant .
-```
-
-Run the container according to the configuration described in:
-
-```text
-support_assistant/README.md
-```
-
----
-
-# Reproducibility
-
-The project includes committed datasets and saved artifacts where required so that the analysis can be reproduced without depending entirely on external data sources.
-
-Random states and preprocessing pipelines are used where applicable to improve reproducibility.
-
----
-
-# Project Outcome
-
-This project demonstrates a complete workflow covering:
-
-**Data Collection → Data Cleaning → Data Transformation → Database → SQL → Pandas → EDA → Machine Learning → Model Evaluation → Model Persistence → AI Support Assistant → Docker**
-
----
-
-# Author
-
-**Capstone Project**
-
-Built as part of an AI / Data Science learning and project workflow.
+The committed CSV, SQLite database, notebooks, and joblib artifact are useful offline fallbacks, but the scripts/notebooks remain the source of reproducible computation. Do not invent or manually alter outputs to make metrics look better. Review and understand the implementation before submission.
